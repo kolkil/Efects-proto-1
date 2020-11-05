@@ -1,0 +1,9 @@
+﻿  main.cpp
+  waveInputHandler.cpp
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveInputHandler.cpp(51,23): warning C4018: '<': signed/unsigned mismatch
+  Generating code
+  4 of 247 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Efects proto 1.vcxproj -> C:\Users\jangg\source\repos\mictest2\Release\Efects proto 1.exe
