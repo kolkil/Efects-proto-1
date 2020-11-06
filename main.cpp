@@ -9,28 +9,38 @@
 #include "bufferProcThread.h"
 #include "waveOutputHandler.h"
 #include "bufferDisplay.h"
+#include "fftEffect.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
     WPARAM wParam, LPARAM lParam);
 
 
+// sygna³ oknem Hamminga o d³ugoœci bufora
+// fft czêœæ urojona zerowa
+// 20 * log (|wynik|)
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
 {
     MSG msg;
 
-    waveInputHandler wih(10); // this should be much simpler and should implement interface
+    // this should be much simpler and should implement interface
+    waveInputHandler<short> wih(10); // tested values are 6, 10, 12 for other values I don't know
 
-    amplifierEffect amef(1);
-    delayEffect def(wih.getBurrefsNumber() / 2, wih.getCurrentBufferSize());
-    waveOutputHandler woh(wih.makeOutFormatex(), wih.getBurrefsNumber());
-    bufferDisplay bufDisplay(wih.getCurrentBufferSize(), "Raw buffer display");
+    amplifierEffect<short> amef(1);
+    delayEffect<short> def(wih.getBurrefsNumber() / 2, wih.getCurrentBufferSize());
+    waveOutputHandler<short> woh(wih.makeOutFormatex(), wih.getBurrefsNumber());
+    bufferDisplay<short> bufDisplay(wih.getCurrentBufferSize(), "Raw buffer display");
+    bufferDisplay<short> fftDisplay(wih.getCurrentBufferSize(), "FFT display");
+    fftEffect<short> fftf(wih.getCurrentBufferSize());
+    bufferProcThread<short> bpt(&wih); // this is actualy main buffer processing thread and should take interface as argument
 
-    bufferProcThread bpt(&wih); // this is actualy main buffer processing thread and should take interface as argument
+    fftDisplay.addEffect(&fftf);
 
-    // add effects
+    // add effects to main thread
     //bpt.addEffect(&amef);
     //bpt.addEffect(&def);
     bpt.addEffect(&bufDisplay);
+    bpt.addEffect(&fftDisplay);
 
     // add last effect that will handle output
     bpt.addOutwriter(&woh);
@@ -42,9 +52,10 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
     woh.openWaveOut();
 
     bufDisplay.showWindowAndStartDrawing(hInstance, iCmdShow);
+    fftDisplay.showWindowAndStartDrawing(hInstance, iCmdShow);
 
     // start output effect worker
-    std::thread thrd(&bufferProcThread::work, &bpt);
+    std::thread thrd(&bufferProcThread<short>::work, &bpt);
 
     // start reading from input device
     wih.startWaveIn();

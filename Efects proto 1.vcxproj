@@ -143,6 +143,8 @@
     <ClCompile Include="bufferDisplay.cpp" />
     <ClCompile Include="bufferProcThread.cpp" />
     <ClCompile Include="delayEffect.cpp" />
+    <ClCompile Include="fftEffect.cpp" />
+    <ClCompile Include="hammingWindowEffect.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="waveInputHandler.cpp" />
     <ClCompile Include="waveOutputHandler.cpp" />
@@ -152,6 +154,8 @@
     <ClInclude Include="bufferDisplay.h" />
     <ClInclude Include="bufferProcThread.h" />
     <ClInclude Include="delayEffect.h" />
+    <ClInclude Include="fftEffect.h" />
+    <ClInclude Include="hammingWindowEffect.h" />
     <ClInclude Include="IEffect.h" />
     <ClInclude Include="waveInputHandler.h" />
     <ClInclude Include="waveOutputHandler.h" />

@@ -1,9 +1,81 @@
-﻿  main.cpp
+﻿  amplifierEffect.cpp
+  bufferDisplay.cpp
+  bufferProcThread.cpp
+  delayEffect.cpp
+  main.cpp
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveInputHandler.h(134,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveInputHandler.h(125): message : while compiling class template member function 'void waveInputHandler<short>::openAndAddHeaders(void)'
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(39): message : see reference to function template instantiation 'void waveInputHandler<short>::openAndAddHeaders(void)' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(21): message : see reference to class template instantiation 'waveInputHandler<short>' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\amplifierEffect.h(24,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\amplifierEffect.h(23): message : while compiling class template member function 'void amplifierEffect<short>::apply(T *,size_t)'
+          with
+          [
+              T=short
+          ]
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(23): message : see reference to class template instantiation 'amplifierEffect<short>' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\amplifierEffect.h(26,1): warning C4244: '*=': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=short
+          ]
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\delayEffect.h(30,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\delayEffect.h(26): message : while compiling class template member function 'delayEffect<short>::delayEffect(size_t,size_t)'
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(24): message : see reference to function template instantiation 'delayEffect<short>::delayEffect(size_t,size_t)' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(24): message : see reference to class template instantiation 'delayEffect<short>' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\delayEffect.h(41,19): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\delayEffect.h(38): message : while compiling class template member function 'void delayEffect<short>::apply(T *,size_t)'
+          with
+          [
+              T=short
+          ]
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\delayEffect.h(49,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\delayEffect.h(54,33): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\bufferProcThread.h(55,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\bufferProcThread.h(45): message : while compiling class template member function 'void bufferProcThread<short>::work(void)'
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(47): message : see reference to function template instantiation 'void bufferProcThread<short>::work(void)' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(28): message : see reference to class template instantiation 'bufferProcThread<short>' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveInputHandler.h(99,46): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveInputHandler.h(98): message : while compiling class template member function 'T *waveInputHandler<T>::getCurrentBuffer(void)'
+          with
+          [
+              T=short
+          ]
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\bufferProcThread.h(53): message : see reference to function template instantiation 'T *waveInputHandler<T>::getCurrentBuffer(void)' being compiled
+          with
+          [
+              T=short
+          ]
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveInputHandler.h(79): message : while compiling class template member function 'waveInputHandler<short>::waveInputHandler(int)'
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(21): message : see reference to function template instantiation 'waveInputHandler<short>::waveInputHandler(int)' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveInputHandler.h(99,64): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveOutputHandler.h(66,38): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveOutputHandler.h(64): message : while compiling class template member function 'void waveOutputHandler<short>::writeOut(T *,size_t)'
+          with
+          [
+              T=short
+          ]
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveOutputHandler.h(89): message : see reference to function template instantiation 'void waveOutputHandler<short>::writeOut(T *,size_t)' being compiled
+          with
+          [
+              T=short
+          ]
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveOutputHandler.h(48): message : while compiling class template member function 'waveOutputHandler<short>::waveOutputHandler(WAVEFORMATEX,size_t)'
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(25): message : see reference to function template instantiation 'waveOutputHandler<short>::waveOutputHandler(WAVEFORMATEX,size_t)' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(25): message : see reference to class template instantiation 'waveOutputHandler<short>' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveOutputHandler.h(66,56): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\bufferDisplay.h(79,1): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\bufferDisplay.h(61): message : while compiling class template member function 'void bufferDisplay<short>::drawBuffer(void)'
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\bufferDisplay.h(91): message : see reference to function template instantiation 'void bufferDisplay<short>::drawBuffer(void)' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\bufferDisplay.h(90): message : while compiling class template member function 'bufferDisplay<short>::bufferDisplay(size_t,std::string)'
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(26): message : see reference to function template instantiation 'bufferDisplay<short>::bufferDisplay(size_t,std::string)' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\main.cpp(26): message : see reference to class template instantiation 'bufferDisplay<short>' being compiled
+C:\Users\jangg\source\repos\mictest2\Efects proto 1\bufferDisplay.h(81,130): warning C4244: 'argument': conversion from 'double' to 'size_t', possible loss of data
   waveInputHandler.cpp
-C:\Users\jangg\source\repos\mictest2\Efects proto 1\waveInputHandler.cpp(51,23): warning C4018: '<': signed/unsigned mismatch
+  waveOutputHandler.cpp
   Generating code
-  4 of 247 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  518 of 524 functions (98.9%) were compiled, the rest were copied from previous compilation.
+    370 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Efects proto 1.vcxproj -> C:\Users\jangg\source\repos\mictest2\Release\Efects proto 1.exe

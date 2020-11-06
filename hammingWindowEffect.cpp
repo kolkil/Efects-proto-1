@@ -1,0 +1,1 @@
+#include "hammingWindowEffect.h"

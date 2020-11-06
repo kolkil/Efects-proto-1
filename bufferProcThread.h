@@ -1,39 +1,67 @@
 #pragma once
 #include <condition_variable>
 #include <vector>
+#include <mutex>
+#include <thread>
 #include "IEffect.h"
 #include "waveInputHandler.h"
 
+template <typename T>
 class bufferProcThread
 {
 private:
     std::condition_variable& cnd;
-    char* buffer = NULL;
+    std::unique_ptr<T[]> buffer;
     size_t buffer_len = 0;
-    std::vector<IEffect*> effects;
+    std::vector<IEffect<T>*> effects;
     std::unique_ptr<std::thread> thrd;
-    IEffect* outwriter = nullptr;
-    waveInputHandler* waveIn;
+    IEffect<T>* outwriter = nullptr;
+    waveInputHandler<T>* waveIn;
 
 public:
-    bufferProcThread(waveInputHandler *wih) :
+    bufferProcThread(waveInputHandler<T>* wih) :
         cnd(wih->getConditional())
     {
         waveIn = wih;
         buffer_len = waveIn->getCurrentBufferSize();
-        buffer = new char[buffer_len];
+        buffer = std::make_unique<T[]>(buffer_len);
     }
 
-    void addEffect(IEffect* e)
+    void addEffect(IEffect<T>* e)
     {
         effects.push_back(e);
     }
 
-    void addOutwriter(IEffect* out)
+    void addOutwriter(IEffect<T>* out)
     {
         outwriter = out;
     }
 
-    void start();
     void work();
 };
+
+template <typename T>
+void bufferProcThread<T>::work()
+{
+    //char* out_buffer = new char[buffer_len];
+
+    while (1)
+    {
+        std::mutex mtx;
+        std::unique_lock<std::mutex> ulck(mtx);
+        cnd.wait(ulck);
+        memcpy(buffer.get(), waveIn->getCurrentBuffer(), buffer_len * sizeof(T));
+
+        for (int i = 0; i < effects.size(); ++i)
+        {
+            effects[i]->apply(buffer.get(), buffer_len);
+        }
+
+        if (outwriter)
+        {
+            outwriter->apply(buffer.get(), buffer_len);
+        }
+
+        ulck.unlock();
+    }
+}
