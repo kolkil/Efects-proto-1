@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="amplifierEffect.cpp" />
+    <ClCompile Include="bufferDisplay.cpp" />
     <ClCompile Include="bufferProcThread.cpp" />
     <ClCompile Include="delayEffect.cpp" />
     <ClCompile Include="main.cpp" />
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="amplifierEffect.h" />
+    <ClInclude Include="bufferDisplay.h" />
     <ClInclude Include="bufferProcThread.h" />
     <ClInclude Include="delayEffect.h" />
     <ClInclude Include="IEffect.h" />

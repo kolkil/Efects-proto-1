@@ -11,15 +11,16 @@
 #include <array>
 #include <condition_variable>
 
+template <typename T>
 class waveInputHandler
 {
 private:
     const int sps = 44100;
     const int sample_size = 16;
     const int buffers_per_sec = 1;
-    char* buffer = NULL;
+    std::unique_ptr<T[]> buffer;
     //std::unique_ptr<char[]> buffer;
-    char* current_sample_buffer = NULL;
+    std::unique_ptr<T[]> current_sample_buffer;
     //std::unique_ptr<char[]> current_sample_buffer;
     WAVEHDR* headers = NULL;
     //std::unique_ptr<WAVEHDR[]> headers;
@@ -53,13 +54,7 @@ private:
             //MessageBox(NULL, (LPCWSTR)std::to_wstring((int)current_handler->sps).c_str(), TEXT("WIM_DATA"), 0);
             if (hdr->dwFlags & WHDR_DONE && hdr && dwInstance)
             {
-                //current_handler->setCurrentBuffer(hdr->lpData);
-                //hdr->dwFlags = 0;
-                //hdr->dwBytesRecorded = 0;
                 hdr->dwUser = 2;
-                //current_handler->cleanHeaders();
-                //waveInPrepareHeader(current_handler->wi, hdr, sizeof(WAVEHDR));
-                //waveInAddBuffer(current_handler->wi, hdr, sizeof(WAVEHDR));
                 current_handler->cnd.notify_one();
             }
             break;
@@ -71,8 +66,7 @@ private:
 
 public:
     waveInputHandler(int nbuffps);
-    void setCurrentBuffer(char* buff);
-    char* getCurrentBuffer();
+    T* getCurrentBuffer();
     void startWaveIn();
     void openAndAddHeaders();
     size_t getCurrentBufferSize();

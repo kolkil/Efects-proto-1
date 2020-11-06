@@ -22,11 +22,11 @@ waveInputHandler::waveInputHandler(int nbuffps)
     wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
 }
 
-void waveInputHandler::setCurrentBuffer(char* buff)
-{
-    memcpy(current_sample_buffer, buff, single_buffer_len);
-    //memcpy(current_sample_buffer.get(), buff, single_buffer_len);
-}
+//void waveInputHandler::setCurrentBuffer(char* buff)
+//{
+//    memcpy(current_sample_buffer, buff, single_buffer_len);
+//    //memcpy(current_sample_buffer.get(), buff, single_buffer_len);
+//}
 
 char* waveInputHandler::getCurrentBuffer()
 {

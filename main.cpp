@@ -8,6 +8,7 @@
 #include "delayEffect.h"
 #include "bufferProcThread.h"
 #include "waveOutputHandler.h"
+#include "bufferDisplay.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
     WPARAM wParam, LPARAM lParam);
@@ -20,15 +21,17 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
     waveInputHandler wih(10); // this should be much simpler and should implement interface
 
     amplifierEffect amef(1);
-    delayEffect def(wih.getBurrefsNumber()/2, wih.getCurrentBufferSize());
+    delayEffect def(wih.getBurrefsNumber() / 2, wih.getCurrentBufferSize());
     waveOutputHandler woh(wih.makeOutFormatex(), wih.getBurrefsNumber());
+    bufferDisplay bufDisplay(wih.getCurrentBufferSize(), "Raw buffer display");
 
     bufferProcThread bpt(&wih); // this is actualy main buffer processing thread and should take interface as argument
 
     // add effects
-    bpt.addEffect(&amef);
-    bpt.addEffect(&def);
-    
+    //bpt.addEffect(&amef);
+    //bpt.addEffect(&def);
+    bpt.addEffect(&bufDisplay);
+
     // add last effect that will handle output
     bpt.addOutwriter(&woh);
 
@@ -37,6 +40,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
 
     // open output device
     woh.openWaveOut();
+
+    bufDisplay.showWindowAndStartDrawing(hInstance, iCmdShow);
 
     // start output effect worker
     std::thread thrd(&bufferProcThread::work, &bpt);
