@@ -56,7 +56,7 @@ class waveInBufferProvider :
             }
             break;
         default:
-            MessageBox(NULL, TEXT("Default case"), TEXT("TEST"), 0);
+            //MessageBox(NULL, TEXT("Default case"), TEXT("TEST"), 0);
             break;
         }
     }

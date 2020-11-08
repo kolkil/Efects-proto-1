@@ -26,7 +26,6 @@ private:
     std::unique_ptr<T[]> buffer;
     std::condition_variable cnd;
     std::vector<IEffect<T>*> effects;
-    std::unique_ptr<Gdiplus::Graphics> graphics;
     std::unique_ptr<Gdiplus::Pen> pen;
     HDC hdc;
     HWND hWnd;
@@ -64,16 +63,19 @@ template <typename T>
 void bufferDisplay<T>::drawBuffer()
 {
     std::unique_ptr<T[]> local_buffer_copy = std::make_unique<T[]>(buffer_length);
+    std::unique_ptr<Gdiplus::Graphics> graphics;
+    int height = 0;
+    int width = 0;
+
     while (1)
     {
         std::mutex mtx;
         std::unique_lock<std::mutex> ulck(mtx);
-        cnd.wait(ulck);
 
-        memcpy(local_buffer_copy.get(), buffer.get(), buffer_length * sizeof(T));
+        RECT r = { 0 };
 
-        int height = 0;
-        int width = 0;
+        int new_height = 0;
+        int new_width = 0;
         int axis0_v = 0; // 0 axis vertical move
         int idx1 = 0;
         int idx2 = 0;
@@ -83,11 +85,28 @@ void bufferDisplay<T>::drawBuffer()
         double absMaxi = 0;
         double step = 0;
 
-        RECT r = { 0 };
+        cnd.wait(ulck);
+
+        if (!graphics.get())
+        {
+            graphics = std::make_unique<Gdiplus::Graphics>(hdc);
+        }
+
+        memcpy(local_buffer_copy.get(), buffer.get(), buffer_length * sizeof(T));
+
         GetWindowRect(hWnd, &r);
 
-        height = r.bottom - r.top - 50; // - some pixels for general better look
-        width = r.right - r.left;
+        new_height = r.bottom - r.top - 50; // - some pixels for general better look
+        new_width = r.right - r.left;
+
+        if (new_height != height || new_width != width) // if window was resized, recreate graphics
+        {
+            graphics.release();
+            graphics = std::make_unique<Gdiplus::Graphics>(hdc);
+            height = new_height;
+            width = new_width;
+        }
+
         axis0_v = height / 2;
         step = ((double)buffer_length / (double)width);
 
@@ -165,8 +184,10 @@ void bufferDisplay<T>::showWindowAndStartDrawing(HINSTANCE hInstance, INT iCmdSh
         WS_OVERLAPPEDWINDOW,      // window style
         CW_USEDEFAULT,            // initial x position
         CW_USEDEFAULT,            // initial y position
-        GetSystemMetrics(SM_CXSCREEN),            // initial x size
-        GetSystemMetrics(SM_CYSCREEN),            // initial y size
+        //GetSystemMetrics(SM_CXSCREEN),            // initial x size
+        //GetSystemMetrics(SM_CXSCREEN),            // initial x size
+        CW_USEDEFAULT,            // initial y size
+        CW_USEDEFAULT,            // initial y size
         NULL,                     // parent window handle
         NULL,                     // window menu handle
         hInstance,                // program instance handle
@@ -175,6 +196,5 @@ void bufferDisplay<T>::showWindowAndStartDrawing(HINSTANCE hInstance, INT iCmdSh
     ShowWindow(hWnd, iCmdShow);
     UpdateWindow(hWnd);
     hdc = BeginPaint(hWnd, &ps);
-    graphics = std::make_unique<Gdiplus::Graphics>(hdc);
     pen = std::make_unique<Gdiplus::Pen>(Gdiplus::Color(255, 0, 0, 255));
 }
