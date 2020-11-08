@@ -139,27 +139,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="amplifierEffect.cpp" />
-    <ClCompile Include="bufferDisplay.cpp" />
-    <ClCompile Include="bufferProcThread.cpp" />
-    <ClCompile Include="delayEffect.cpp" />
-    <ClCompile Include="distortionEffect.cpp" />
-    <ClCompile Include="fftEffect.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mathOperations.cpp" />
-    <ClCompile Include="waveInputHandler.cpp" />
-    <ClCompile Include="waveOutputHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="amplifierEffect.h" />
     <ClInclude Include="bufferDisplay.h" />
-    <ClInclude Include="bufferProcThread.h" />
+    <ClInclude Include="pipelineProcessor.h" />
     <ClInclude Include="delayEffect.h" />
     <ClInclude Include="distortionEffect.h" />
     <ClInclude Include="fftEffect.h" />
+    <ClInclude Include="IBufferProvider.h" />
     <ClInclude Include="IEffect.h" />
     <ClInclude Include="mathOperations.h" />
-    <ClInclude Include="waveInputHandler.h" />
+    <ClInclude Include="waveInBufferProvider.h" />
     <ClInclude Include="waveOutputHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

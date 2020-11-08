@@ -1,26 +1,26 @@
 #pragma once
+
 #pragma comment(lib,"winmm.lib")
 #include <Windows.h>
 #include <mmsystem.h>
 
 #include <cstdlib>
 #include <iostream>
-#include <atomic>
-#include <string>
-#include <thread>
-#include <array>
 #include <condition_variable>
+#include <mutex>
+
+#include "IBufferProvider.h"
 
 template <typename T>
-class waveInputHandler
+class waveInBufferProvider :
+    public IBufferProvider<T>
 {
-private:
     const int samples_per_second = 44100;
     const int sample_size = sizeof(T) * 8; // this can be char or short (1 or 2 bytes)
     std::unique_ptr<T[]> buffer;
     std::unique_ptr<T[]> current_sample_buffer;
     std::unique_ptr<WAVEHDR[]> headers;
-    std::condition_variable cnd;
+    std::condition_variable is_any_buffer_ready_cnd;
     size_t nbuffers;
     size_t single_buffer_len;
     size_t total_buffer_len_samples;
@@ -37,7 +37,7 @@ private:
         DWORD_PTR dwParam2
     )
     {
-        waveInputHandler<T>* current_handler = (waveInputHandler<T>*)dwInstance;
+        waveInBufferProvider<T>* current_handler = (waveInBufferProvider<T>*)dwInstance;
         WAVEHDR* hdr = (WAVEHDR*)dwParam1;
         switch (uMsg)
         {
@@ -52,7 +52,7 @@ private:
             if (hdr->dwFlags & WHDR_DONE && hdr && dwInstance)
             {
                 hdr->dwUser = 2;
-                current_handler->cnd.notify_one();
+                current_handler->is_any_buffer_ready_cnd.notify_one();
             }
             break;
         default:
@@ -62,28 +62,30 @@ private:
     }
 
 public:
-    waveInputHandler(size_t buffer_size, int nbuffs);
-    T* getCurrentBuffer();
+    waveInBufferProvider(size_t buffer_size, int nbuffs);
+    T* getBuffer();
     void startWaveIn();
     void openAndAddHeaders();
-    size_t getSingleBufferSize();
-    std::condition_variable& getCnd();
+    void waitForBuffer();
+    //size_t getSingleBufferSize();
+    size_t getBufferLen();
+    size_t getBufferSize();
+    //std::condition_variable& getCnd();
     WAVEFORMATEX makeOutFormatex();
-    std::condition_variable& getConditional();
-    int getBurrefsNumber();
+    //std::condition_variable& getConditional();
+    int getNBuffers();
+    void start();
 
 };
 
-// definitions
-
-template <typename T>
-waveInputHandler<T>::waveInputHandler(size_t buffer_size, int nbuffs)
+template<typename T>
+inline waveInBufferProvider<T>::waveInBufferProvider(size_t buffer_size, int nbuffs)
 {
     this->single_buffer_len = buffer_size;
     this->nbuffers = nbuffs;
     this->total_buffer_len_samples = nbuffs * buffer_size;
     this->total_buffer_len_bytes = total_buffer_len_samples * sizeof(T);
-    
+
     buffer = std::make_unique<T[]>(total_buffer_len_samples);
     current_sample_buffer = std::make_unique<T[]>(single_buffer_len);
     headers = std::make_unique<WAVEHDR[]>(nbuffers);
@@ -97,8 +99,8 @@ waveInputHandler<T>::waveInputHandler(size_t buffer_size, int nbuffs)
     wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
 }
 
-template <typename T>
-T* waveInputHandler<T>::getCurrentBuffer()
+template<typename T>
+inline T* waveInBufferProvider<T>::getBuffer()
 {
     for (int i = current_header_id, c = 0; c < nbuffers; i = i >= nbuffers - 1 ? 0 : i + 1, c++)
     {
@@ -118,19 +120,19 @@ T* waveInputHandler<T>::getCurrentBuffer()
     return current_sample_buffer.get();
 }
 
-template <typename T>
-void waveInputHandler<T>::startWaveIn()
+template<typename T>
+inline void waveInBufferProvider<T>::startWaveIn()
 {
     waveInStart(wi);
 }
 
-template <typename T>
-void waveInputHandler<T>::openAndAddHeaders()
+template<typename T>
+inline void waveInBufferProvider<T>::openAndAddHeaders()
 {
     waveInOpen(&wi,
         WAVE_MAPPER,
         &wfx,
-        (DWORD_PTR)waveInputHandler::waveInProc, (DWORD_PTR)this,
+        (DWORD_PTR)waveInBufferProvider::waveInProc, (DWORD_PTR)this,
         CALLBACK_FUNCTION
     );
 
@@ -147,19 +149,28 @@ void waveInputHandler<T>::openAndAddHeaders()
 }
 
 template<typename T>
-inline size_t waveInputHandler<T>::getSingleBufferSize()
+inline void waveInBufferProvider<T>::waitForBuffer()
+{
+    std::mutex mtx;
+    std::unique_lock<std::mutex> ulck(mtx);
+    is_any_buffer_ready_cnd.wait(ulck);
+    ulck.unlock();
+}
+
+template<typename T>
+inline size_t waveInBufferProvider<T>::getBufferLen()
 {
     return single_buffer_len;
 }
 
-template <typename T>
-std::condition_variable& waveInputHandler<T>::getCnd()
+template<typename T>
+inline size_t waveInBufferProvider<T>::getBufferSize()
 {
-    return cnd;
+    return getBufferLen() * sizeof(T);
 }
 
-template <typename T>
-WAVEFORMATEX waveInputHandler<T>::makeOutFormatex()
+template<typename T>
+inline WAVEFORMATEX waveInBufferProvider<T>::makeOutFormatex()
 {
     WAVEFORMATEX wfxout = { 0 };
     wfxout.nChannels = 1;
@@ -172,15 +183,14 @@ WAVEFORMATEX waveInputHandler<T>::makeOutFormatex()
     return wfxout;
 }
 
-template <typename T>
-std::condition_variable& waveInputHandler<T>::getConditional()
-{
-    return cnd;
-}
-
-template <typename T>
-int waveInputHandler<T>::getBurrefsNumber()
+template<typename T>
+inline int waveInBufferProvider<T>::getNBuffers()
 {
     return nbuffers;
 }
 
+template<typename T>
+inline void waveInBufferProvider<T>::start()
+{
+    startWaveIn();
+}
