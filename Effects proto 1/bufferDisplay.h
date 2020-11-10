@@ -4,6 +4,7 @@
 #include <gdiplus.h>
 
 #include "IEffect.h"
+#include "mathOperations.h"
 
 #include <thread>
 #include <condition_variable>
@@ -27,6 +28,7 @@ private:
     std::condition_variable cnd;
     std::vector<IEffect<T>*> effects;
     std::unique_ptr<Gdiplus::Pen> pen;
+    std::unique_ptr<Gdiplus::Point[]> points;
     HDC hdc;
     HWND hWnd;
     WNDCLASS wndClass;
@@ -78,10 +80,7 @@ void bufferDisplay<T>::drawBuffer()
         int new_width = 0;
         int axis0_v = 0; // 0 axis vertical move
         int idx1 = 0;
-        int idx2 = 0;
         double scale_factor = 0;
-        double maxi = (std::numeric_limits<T>::min)();
-        double mini = (std::numeric_limits<T>::max)();
         double absMaxi = 0;
         double step = 0;
 
@@ -112,21 +111,17 @@ void bufferDisplay<T>::drawBuffer()
 
         graphics->Clear(Gdiplus::Color(255, 255, 255));
 
-        for (int i = 0; i < buffer_length; ++i)
-        {
-            maxi = (std::max)(maxi, (double)local_buffer_copy[i]);
-            mini = (std::min)(mini, (double)local_buffer_copy[i]);
-        }
-
-        absMaxi = (std::max)(std::abs(maxi), std::abs(mini));
+        absMaxi = mathOperations::getMaxAbs(local_buffer_copy.get(), buffer_length);
         scale_factor = ((double)axis0_v) / ((double)absMaxi);
 
-        for (int i = 0; i < width - 1; ++i)
+        for (int i = 0; i < width; ++i)
         {
             idx1 = std::round(double(i) * step);
-            idx2 = std::round(double(i + 1) * step);
-            graphics->DrawLine(pen.get(), i, double(local_buffer_copy[idx1]) * scale_factor + axis0_v, i + 1, double(local_buffer_copy[idx2]) * scale_factor + axis0_v);
+            points[i].X = i;
+            points[i].Y = double(local_buffer_copy[idx1]) * scale_factor + axis0_v;
         }
+
+        graphics->DrawCurve(pen.get(), points.get(), width);
 
         ulck.unlock();
     }
@@ -139,6 +134,7 @@ bufferDisplay<T>::bufferDisplay(size_t buffer_size, std::string classname)
     windowName = classname;
     buffer_length = buffer_size;
     drawer = std::make_unique<std::thread>(&bufferDisplay::drawBuffer, this);
+    points = std::make_unique<Gdiplus::Point[]>(buffer_size);
 }
 
 template <typename T>

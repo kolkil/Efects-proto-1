@@ -2,6 +2,7 @@
 
 #include <array>
 #include <iostream>
+#include <algorithm>
 
 class mathOperations
 {
@@ -22,6 +23,12 @@ public:
 
     template <typename T>
     void applyHammingFourierTakeAbsAndScale(T* buffer);
+
+    template <typename T>
+    T getMaxAbs(T* buffer);
+
+    template <typename T>
+    static T getMaxAbs(T* buffer, size_t len);
 };
 
 template<typename T>
@@ -53,4 +60,23 @@ inline void mathOperations::applyHammingFourierTakeAbsAndScale(T* buffer)
         data_buffer[i] *= max_T_val;
         buffer[i] = data_buffer[i];
     }
+}
+
+template<typename T>
+inline T mathOperations::getMaxAbs(T* buffer)
+{
+    return getMaxAbs(buffer, buffer_len);
+}
+
+template<typename T>
+inline T mathOperations::getMaxAbs(T* buffer, size_t len)
+{
+    T maxi = (std::numeric_limits<T>::min)();
+
+    for (size_t i = 0; i < len; ++i)
+    {
+        maxi = (std::max)(maxi, (T)std::abs(buffer[i]));
+    }
+
+    return maxi;
 }
