@@ -11,6 +11,7 @@
 #include "bufferDisplay.h"
 #include "fftEffect.h"
 #include "distortionEffect.h"
+#include "saveEffect.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
     WPARAM wParam, LPARAM lParam);
@@ -35,6 +36,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
     // analytic effects
     fftEffect<short> fftf(wibp.getBufferLen());
 
+    //save to file effects
+    saveEffect<short> save_eff;
+
     // output writer effect, writes data to default audio output device
     waveOutputHandler<short> woh(wibp.makeOutFormatex(), wibp.getNBuffers());
 
@@ -44,6 +48,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
     // add effect to fft display to actualy perform fft before displaying
     fftDisplay.addEffect(&fftf);
 
+    // add efect to save data for signal analysys outside program
+    pps.addEffect(&save_eff);
+    
     // add effects to main thread
     //bpt.addEffect(&amef);
     //bpt.addEffect(&def);
