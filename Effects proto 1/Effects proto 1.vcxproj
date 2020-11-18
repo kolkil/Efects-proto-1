@@ -152,6 +152,7 @@
     <ClInclude Include="IBufferProvider.h" />
     <ClInclude Include="IEffect.h" />
     <ClInclude Include="mathOperations.h" />
+    <ClInclude Include="saveEffect.h" />
     <ClInclude Include="waveInBufferProvider.h" />
     <ClInclude Include="waveOutputHandler.h" />
   </ItemGroup>
