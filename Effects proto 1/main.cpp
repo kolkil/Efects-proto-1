@@ -39,7 +39,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
     //save to file effects
     saveEffect<short> save_eff;
 
-
     // output writer effect, writes data to default audio output device
     waveOutputHandler<short> woh(wibp.makeOutFormatex(), wibp.getNBuffers());
 
